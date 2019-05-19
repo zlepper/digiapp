@@ -1,7 +1,8 @@
-package dk.zlepper.digiapp
+package dk.zlepper.digiapp.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import dk.zlepper.digiapp.R
 
 class MainActivity : AppCompatActivity() {
 

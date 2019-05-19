@@ -1,10 +1,13 @@
-package dk.zlepper.digiapp
+package dk.zlepper.digiapp.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import dk.zlepper.digiapp.R
+import dk.zlepper.digiapp.services.AuthenticatedUserService
 import dk.zlepper.digiapp.services.AuthenticationService
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +47,12 @@ class LoginFragment : Fragment() {
             try {
                 val response = AuthenticationService.login(username, password)
                 println(response)
+
+                AuthenticatedUserService.accessKey = response.accessKey
+
+                val action = LoginFragmentDirections.actionLoginFragmentToAssetListFragment()
+                findNavController().navigate(action)
+
             } catch (e: AuthenticationService.LoginException) {
                 println("Login failed...")
             }

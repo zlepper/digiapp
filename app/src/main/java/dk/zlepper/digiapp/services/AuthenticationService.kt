@@ -1,6 +1,8 @@
 package dk.zlepper.digiapp.services
 
 import dk.zlepper.digiapp.models.CreateAccessKeyResponse
+import dk.zlepper.digiapp.services.http.ConnectService
+import dk.zlepper.digiapp.services.http.mmDamRetrofit
 import dk.zlepper.digiapp.utilities.md5
 import retrofit2.create
 

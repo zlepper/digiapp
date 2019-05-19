@@ -4,9 +4,12 @@
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph"
             app:startDestination="@id/assetListFragment">
 
-    <fragment android:id="@+id/loginFragment" android:name="dk.zlepper.digiapp.LoginFragment"
-              android:label="fragment_login" tools:layout="@layout/fragment_login"/>
-    <fragment android:id="@+id/assetListFragment" android:name="dk.zlepper.digiapp.AssetListFragment"
+    <fragment android:id="@+id/loginFragment" android:name="dk.zlepper.digiapp.ui.LoginFragment"
+              android:label="fragment_login" tools:layout="@layout/fragment_login">
+        <action android:id="@+id/action_loginFragment_to_assetListFragment" app:destination="@id/assetListFragment"
+                app:popUpTo="@+id/nav_graph"/>
+    </fragment>
+    <fragment android:id="@+id/assetListFragment" android:name="dk.zlepper.digiapp.ui.AssetListFragment"
               android:label="fragment_asset_list" tools:layout="@layout/fragment_asset_list">
         <action android:id="@+id/action_assetListFragment_to_assetDetailsFragment"
                 app:destination="@id/assetDetailsFragment"/>
@@ -17,7 +20,7 @@
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
-    <fragment android:id="@+id/assetDetailsFragment" android:name="dk.zlepper.digiapp.AssetDetailsFragment"
+    <fragment android:id="@+id/assetDetailsFragment" android:name="dk.zlepper.digiapp.ui.AssetDetailsFragment"
               android:label="fragment_asset_details" tools:layout="@layout/fragment_asset_details">
         <argument android:name="assetId" app:argType="integer"/>
     </fragment>
