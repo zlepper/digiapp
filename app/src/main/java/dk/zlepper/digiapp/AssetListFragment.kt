@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavGraphNavigator
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.findNavController
 
 
@@ -36,7 +38,10 @@ class AssetListFragment : Fragment() {
         super.onCreate(savedInstanceState)
         println("On create")
 
-        findNavController().navigate(R.id.action_assetListFragment_to_loginFragment)
+
+        val loginAction = AssetListFragmentDirections.actionAssetListFragmentToLoginFragment()
+
+        findNavController().navigate(loginAction)
     }
 
 }

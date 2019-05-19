@@ -10,7 +10,12 @@
               android:label="fragment_asset_list" tools:layout="@layout/fragment_asset_list">
         <action android:id="@+id/action_assetListFragment_to_assetDetailsFragment"
                 app:destination="@id/assetDetailsFragment"/>
-        <action android:id="@+id/action_assetListFragment_to_loginFragment" app:destination="@id/loginFragment"/>
+        <action
+            android:id="@+id/action_assetListFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment android:id="@+id/assetDetailsFragment" android:name="dk.zlepper.digiapp.AssetDetailsFragment"
               android:label="fragment_asset_details" tools:layout="@layout/fragment_asset_details">

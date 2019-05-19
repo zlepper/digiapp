@@ -1,12 +1,15 @@
 package dk.zlepper.digiapp
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dk.zlepper.digiapp.services.AuthenticationService
+import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 /**
@@ -26,4 +29,25 @@ class LoginFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        loginButton.setOnClickListener(::onLogin)
+    }
+
+    fun onLogin(view: View) {
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val username = usernameInput.text.toString()
+            val password = passwordInput.text.toString()
+
+            try {
+                val response = AuthenticationService.login(username, password)
+                println(response)
+            } catch (e: AuthenticationService.LoginException) {
+                println("Login failed...")
+            }
+        }
+
+    }
 }
