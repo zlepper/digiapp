@@ -19,9 +19,16 @@ class AssetAdapter : PagedListAdapter<Asset, AssetAdapter.ViewHolder>(ASSET_COMP
         return ViewHolder(view)
     }
 
+    var onAssetSelected: (Asset) -> Unit = {}
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val asset = getItem(position)
         holder.bind(asset)
+        if (asset != null) {
+            holder.itemView.setOnClickListener { onAssetSelected(asset) }
+        } else {
+            holder.itemView.setOnClickListener(null)
+        }
     }
 
     class ViewHolder(

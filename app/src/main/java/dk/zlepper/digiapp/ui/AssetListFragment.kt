@@ -57,6 +57,10 @@ class AssetListFragment : Fragment() {
         if (AuthenticatedUserService.authenticated) {
             initViewModel()
             initAdapter()
+            adapter.onAssetSelected = {
+                val action = AssetListFragmentDirections.actionAssetListFragmentToAssetDetailsFragment(it.assetId)
+                findNavController().navigate(action)
+            }
         }
 
     }

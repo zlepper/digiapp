@@ -15,4 +15,11 @@ interface AssetService {
         @Query("sLayoutFolderId") folderId: Int,
         @Query("accessKey") accessKey: String
     ): DigizuiteApiResponse<Asset>
+
+    @GET("/dmm3bwsv3/SearchService.js?SearchName=GetAssetsById&page=1&limit=99999&sAssetId_type_multiids=1")
+    suspend fun getAsset(
+        @Query("sAssetId") assetId: Int,
+        @Query("sLayoutFolderId") folderId: Int,
+        @Query("accessKey") accessKey: String
+    ): DigizuiteApiResponse<Asset>
 }

@@ -22,4 +22,17 @@ object AssetService {
 
         return AssetList(response.items, response.total)
     }
+
+    suspend fun getAsset(assetId: Int): Asset {
+        val config = ConfigService.getConfigs()
+        val accessKey = AuthenticatedUserService.requireAccessKey()
+
+        val response = assetService.getAsset(assetId, config.folderId, accessKey)
+
+        if (!response.success) {
+            throw Exception("getAsset failed: $response")
+        }
+
+        return response.item
+    }
 }

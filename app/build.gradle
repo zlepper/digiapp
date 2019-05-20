@@ -24,6 +24,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    // Required for ExoPlayer
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -75,5 +79,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.4.0'
 
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.10.0'
 
 }

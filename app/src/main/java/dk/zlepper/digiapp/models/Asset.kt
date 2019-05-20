@@ -72,5 +72,6 @@ data class Asset(
     val name: String,
     val thumb: String,
     val image1080p: String,
-    val uploadedByName: String
+    val uploadedByName: String,
+    val desktopH264: String
 )

@@ -23,5 +23,7 @@
     <fragment android:id="@+id/assetDetailsFragment" android:name="dk.zlepper.digiapp.ui.AssetDetailsFragment"
               android:label="fragment_asset_details" tools:layout="@layout/fragment_asset_details">
         <argument android:name="assetId" app:argType="integer"/>
+        <action android:id="@+id/action_assetDetailsFragment_to_loginFragment" app:destination="@id/loginFragment"
+                app:popUpTo="@+id/nav_graph" app:popUpToInclusive="true" app:launchSingleTop="true"/>
     </fragment>
 </navigation>
