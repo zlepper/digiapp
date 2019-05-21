@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.room.Room
 import dk.zlepper.digiapp.R
+import dk.zlepper.digiapp.daos.AppDatabase
+import dk.zlepper.digiapp.models.UserCredentials
 import dk.zlepper.digiapp.services.AuthenticatedUserService
 import dk.zlepper.digiapp.services.AuthenticationService
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -49,6 +52,11 @@ class LoginFragment : Fragment() {
                 println(response)
 
                 AuthenticatedUserService.accessKey = response.accessKey
+
+                val db = Room.databaseBuilder<AppDatabase>(requireContext(), AppDatabase::class.java, "db.db").build()
+                val dao = db.userCredentialsDao()
+                dao.removeStoredCredentials()
+                dao.insertCredentials(UserCredentials(username, password))
 
                 val action = LoginFragmentDirections.actionLoginFragmentToAssetListFragment()
                 findNavController().navigate(action)

@@ -14,6 +14,7 @@ import androidx.paging.PagedList
 import dk.zlepper.digiapp.R
 import dk.zlepper.digiapp.models.Asset
 import dk.zlepper.digiapp.services.AuthenticatedUserService
+import kotlinx.android.synthetic.main.fragment_asset_list.*
 import kotlinx.android.synthetic.main.fragment_asset_list.view.*
 
 
@@ -54,15 +55,16 @@ class AssetListFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        if (AuthenticatedUserService.authenticated) {
-            initViewModel()
-            initAdapter()
-            adapter.onAssetSelected = {
-                val action = AssetListFragmentDirections.actionAssetListFragmentToAssetDetailsFragment(it.assetId)
-                findNavController().navigate(action)
-            }
+        if (!AuthenticatedUserService.authenticated) return
+
+        initViewModel()
+        initAdapter()
+        adapter.onAssetSelected = {
+            val action = AssetListFragmentDirections.actionAssetListFragmentToAssetDetailsFragment(it.assetId)
+            findNavController().navigate(action)
         }
 
+        uploadButton.setOnClickListener { onUploadClicked() }
     }
 
 
@@ -86,6 +88,12 @@ class AssetListFragment : Fragment() {
         } else {
             println("View was null?????")
         }
+    }
+
+    fun onUploadClicked() {
+        println("Upload clicked!!")
+
+
     }
 
 }

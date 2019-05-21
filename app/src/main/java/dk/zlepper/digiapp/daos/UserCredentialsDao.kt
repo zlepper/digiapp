@@ -1,7 +1,6 @@
 package dk.zlepper.digiapp.daos
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
@@ -13,8 +12,8 @@ interface UserCredentialsDao {
     suspend fun insertCredentials(userCredentials: UserCredentials)
 
     @Query("SELECT * FROM UserCredentials")
-    suspend fun getStoredCredentials()
+    suspend fun getStoredCredentials(): UserCredentials?
 
-    @Delete
-    suspend fun removeStoredCredentials(credentials: UserCredentials)
+    @Query("DELETE FROM UserCredentials")
+    suspend fun removeStoredCredentials()
 }
