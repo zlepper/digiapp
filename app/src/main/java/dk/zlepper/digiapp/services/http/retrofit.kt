@@ -7,7 +7,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
 
-val httpClient = OkHttpClient.Builder().addInterceptor(logging).build()
+val httpClient = OkHttpClient.Builder()
+//    .addInterceptor(logging)
+    .build()
 
 val mmDamRetrofit = Retrofit.Builder()
     .baseUrl("https://mm-dam.dev.digizuite.com/")
