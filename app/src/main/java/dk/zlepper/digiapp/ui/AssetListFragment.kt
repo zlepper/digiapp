@@ -219,16 +219,13 @@ class AssetListFragment : Fragment() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(context?.packageManager as PackageManager)?.also {
-                // Create the File where the photo should go
                 val photoFile: File? = try {
                     createImageFile()
                 } catch (ex: IOException) {
                     // Error occurred while creating the File, probably because a storage reference couldn't be obtained
                     null
                 }
-                // Continue only if the File was successfully created
                 photoFile?.also {
-                    //galleryAddPic()
                     val photoURI: Uri? = context?.let { it1 ->
                         FileProvider.getUriForFile(
                             it1,
@@ -251,15 +248,13 @@ class AssetListFragment : Fragment() {
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
-        // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.GERMANY).format(Date())
         val storageDir: File? = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
         ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
         }
 
