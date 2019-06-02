@@ -9,6 +9,7 @@
         <action android:id="@+id/action_loginFragment_to_assetListFragment" app:destination="@id/assetListFragment"
                 app:popUpTo="@+id/nav_graph"/>
     </fragment>
+
     <fragment android:id="@+id/assetListFragment" android:name="dk.zlepper.digiapp.ui.AssetListFragment"
               android:label="fragment_asset_list" tools:layout="@layout/fragment_asset_list">
         <action android:id="@+id/action_assetListFragment_to_assetDetailsFragment"

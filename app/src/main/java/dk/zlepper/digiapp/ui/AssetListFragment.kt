@@ -1,14 +1,29 @@
 package dk.zlepper.digiapp.ui
 
+import android.Manifest
 import android.app.Activity
+import android.app.Dialog
+import android.content.ContentResolver
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.os.Environment.getExternalStoragePublicDirectory
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -27,9 +42,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 private const val READ_FILE_REQUEST_CODE = 4578
+const val EXTERNAL_STORAGE_REQUEST_CODE = 1
 
 /**
  * A simple [Fragment] subclass.
@@ -183,11 +203,79 @@ class AssetListFragment : Fragment() {
         }
     }
 
+    @Throws(Exception::class)
+    fun convertFileToContentUri(file: File): Uri {
+
+        //Uri localImageUri = Uri.fromFile(localImageFile); // Not suitable as it's not a content Uri
+
+        val cr = context?.contentResolver
+        val imagePath = file.absolutePath
+        val imageName = null
+        val imageDescription = null
+        val uriString = MediaStore.Images.Media.insertImage(cr, imagePath, imageName, imageDescription)
+        return Uri.parse(uriString)
+    }
+
+    val REQUEST_IMAGE_CAPTURE = 1
+    val REQUEST_TAKE_PHOTO = 1
+    var currentPhotoPath: String = ""
 
     private fun uploadNewImageFromCamera() {
+        //showPhoneStatePermission()
+        takePicture()
+        GlobalScope.launch {
+            val f = File(currentPhotoPath)
+            val uri = f.toURI()
+            val uploadsrvc = UploadService();
+            val ak = AuthenticatedUserService.requireAccessKey()
+            uploadsrvc.uploadFile(f.inputStream(), f.name, ak)
+        }
         // TODO(fhm) Please implement this :D :D :D :D
     }
 
+    private fun takePicture() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(activity?.packageManager as PackageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File, probably because a storage reference couldn't be obtained
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    //galleryAddPic()
+                    val photoURI: Uri? = context?.let { it1 ->
+                        FileProvider.getUriForFile(
+                            it1,
+                            "dk.zlepper.digiapp.fileprovider",
+                            it
+                        )
+                    }
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.GERMANY).format(Date())
+        val storageDir: File? = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+
+    }
 
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
