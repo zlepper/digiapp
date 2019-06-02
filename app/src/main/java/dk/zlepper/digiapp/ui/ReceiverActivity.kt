@@ -48,8 +48,6 @@ class ReceiverActivity : AppCompatActivity() {
                 val creds = userDao.getStoredCredentials()
                 if (creds != null) {
                     AuthenticationService.login(creds.username, creds.password)
-                } else {
-
                 }
             }
 

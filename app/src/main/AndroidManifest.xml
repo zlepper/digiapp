@@ -17,7 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.TakePictureActivity" />
         <activity
             android:name=".ui.ReceiverActivity"
             android:label="@string/receiver_label">

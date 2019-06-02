@@ -49,9 +49,7 @@ import java.util.*
 
 
 private const val READ_FILE_REQUEST_CODE = 4578
-const val EXTERNAL_STORAGE_REQUEST_CODE = 1
 val REQUEST_TAKE_PHOTO = 1
-val REQUEST_IMAGE_CAPTURE = 1
 var currentPhotoPath: String = ""
 /**
  * A simple [Fragment] subclass.
@@ -215,21 +213,6 @@ class AssetListFragment : Fragment() {
             throw Exception("Could not get file info, as cursor was null")
         }
     }
-
-    @Throws(Exception::class)
-    fun convertFileToContentUri(file: File): Uri {
-
-        //Uri localImageUri = Uri.fromFile(localImageFile); // Not suitable as it's not a content Uri
-
-        val cr = context?.contentResolver
-        val imagePath = file.absolutePath
-        val imageName = null
-        val imageDescription = null
-        val uriString = MediaStore.Images.Media.insertImage(cr, imagePath, imageName, imageDescription)
-        return Uri.parse(uriString)
-    }
-
-
 
 
     private fun takePicture() {

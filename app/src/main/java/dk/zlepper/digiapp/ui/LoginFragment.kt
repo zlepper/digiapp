@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.room.Room
 import dk.zlepper.digiapp.R
 import dk.zlepper.digiapp.daos.AppDatabase
+import dk.zlepper.digiapp.daos.GetAppDatabase
 import dk.zlepper.digiapp.models.UserCredentials
 import dk.zlepper.digiapp.services.AuthenticatedUserService
 import dk.zlepper.digiapp.services.AuthenticationService
@@ -41,15 +43,33 @@ class LoginFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        val userDao = context?.applicationContext?.let { GetAppDatabase(it).userCredentialsDao() }
+        var creds: UserCredentials?
+        if (userDao != null) {
+            GlobalScope.launch {
+                creds = userDao.getStoredCredentials()
+                if (creds != null) {
+                    if (creds?.username != null && creds?.password != null) {
+                        actualLogin(creds?.username!!, creds?.password!!)
+                    }
+
+                }
+            }
+        }
 
         loginButton.setOnClickListener(::onLogin)
     }
 
     fun onLogin(view: View) {
 
+        val username = usernameInput.text.toString()
+        val password = passwordInput.text.toString()
+        actualLogin(username, password)
+
+    }
+
+    fun actualLogin(username: String, password: String) {
         GlobalScope.launch(Dispatchers.Main) {
-            val username = usernameInput.text.toString()
-            val password = passwordInput.text.toString()
 
             try {
                 val response = AuthenticationService.login(username, password)
@@ -76,6 +96,5 @@ class LoginFragment : Fragment() {
                 println("Login failed...")
             }
         }
-
     }
 }
