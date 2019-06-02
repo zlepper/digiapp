@@ -3,15 +3,22 @@ package dk.zlepper.digiapp.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import dk.zlepper.digiapp.R
+import dk.zlepper.digiapp.services.AuthenticatedUserService
+import dk.zlepper.digiapp.services.UploadService
+import kotlinx.android.synthetic.main.activity_take_picture.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -25,11 +32,9 @@ class TakePictureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dispatchTakePictureIntent()
-        val result = Intent()
-        result.putExtra("path", currentPhotoPath)
-        setResult(Activity.RESULT_OK, result)
-        finish()
+        //takePicture()
+        setContentView(R.layout.activity_take_picture)
+        upload_image_preview.setImageURI(Uri.parse(currentPhotoPath))
     }
 
 
@@ -49,31 +54,17 @@ class TakePictureActivity : AppCompatActivity() {
 
     }
 
-    fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                // Create the File where the photo should go
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) {
-                    // Error occurred while creating the File, probably because a storage reference couldn't be obtained
-                    null
-                }
-                // Continue only if the File was successfully created
-                photoFile?.also {
-                    //galleryAddPic()
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                            this,
-                            "dk.zlepper.digiapp.fileprovider",
-                            it
-                    )
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+    fun buttonHandler(view: View) {
+        val f = File(currentPhotoPath)
+        GlobalScope.launch {
+            val uploadsrvc = UploadService()
+            val ak = AuthenticatedUserService.requireAccessKey()
+            uploadsrvc.uploadFile(f.inputStream(), f.name, ak)
 
-                }
-            }
         }
+        Toast.makeText(this, "Uploading file" + f.name, Toast.LENGTH_LONG).show()
     }
+
+
 
 }

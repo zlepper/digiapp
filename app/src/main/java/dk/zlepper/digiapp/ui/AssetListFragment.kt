@@ -50,7 +50,9 @@ import java.util.*
 
 private const val READ_FILE_REQUEST_CODE = 4578
 const val EXTERNAL_STORAGE_REQUEST_CODE = 1
-
+val REQUEST_TAKE_PHOTO = 1
+val REQUEST_IMAGE_CAPTURE = 1
+var currentPhotoPath: String = ""
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
@@ -138,6 +140,17 @@ class AssetListFragment : Fragment() {
                     uploadFile(it)
                 }
             }
+            else if (requestCode == REQUEST_TAKE_PHOTO) {
+                val f = File(currentPhotoPath)
+                GlobalScope.launch {
+                    println("Uploading...")
+                    val uploadsrvc = UploadService()
+                    val ak = AuthenticatedUserService.requireAccessKey()
+                    uploadsrvc.uploadFile(f.inputStream(), f.name, ak)
+
+                }
+                Toast.makeText(context, "Uploading file" + f.name, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -216,27 +229,13 @@ class AssetListFragment : Fragment() {
         return Uri.parse(uriString)
     }
 
-    val REQUEST_IMAGE_CAPTURE = 1
-    val REQUEST_TAKE_PHOTO = 1
-    var currentPhotoPath: String = ""
 
-    private fun uploadNewImageFromCamera() {
-        //showPhoneStatePermission()
-        takePicture()
-        GlobalScope.launch {
-            val f = File(currentPhotoPath)
-            val uri = f.toURI()
-            val uploadsrvc = UploadService();
-            val ak = AuthenticatedUserService.requireAccessKey()
-            uploadsrvc.uploadFile(f.inputStream(), f.name, ak)
-        }
-        // TODO(fhm) Please implement this :D :D :D :D
-    }
+
 
     private fun takePicture() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(activity?.packageManager as PackageManager)?.also {
+            takePictureIntent.resolveActivity(context?.packageManager as PackageManager)?.also {
                 // Create the File where the photo should go
                 val photoFile: File? = try {
                     createImageFile()
@@ -260,6 +259,12 @@ class AssetListFragment : Fragment() {
             }
         }
     }
+
+    private fun uploadNewImageFromCamera() {
+        takePicture()
+    }
+
+
 
     @Throws(IOException::class)
     private fun createImageFile(): File {

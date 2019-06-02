@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import dk.zlepper.digiapp.R
 import dk.zlepper.digiapp.services.AuthenticatedUserService
+import dk.zlepper.digiapp.services.AuthenticationService
 import dk.zlepper.digiapp.services.UploadService
 import kotlinx.android.synthetic.main.activity_receiver.*
 import kotlinx.coroutines.Dispatchers
@@ -23,17 +24,20 @@ class ReceiverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receiver)
-        /*when {
+        when {
             intent?.action == Intent.ACTION_SEND -> {
                 if (intent.type?.startsWith("image/") == true) {
                     handleSendImage(intent) // Handle single image being sent
                 }
             }
-        }*/
+        }
     }
 
     private fun handleSendImage(intent: Intent) {
         (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
+            GlobalScope.launch {
+                AuthenticationService.login("superadministrator", "test")
+            }
             uploadFile(it)
         }
     }
