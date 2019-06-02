@@ -6,9 +6,13 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.provider.OpenableColumns
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
 import dk.zlepper.digiapp.R
+import dk.zlepper.digiapp.daos.AppDatabase
+import dk.zlepper.digiapp.daos.GetAppDatabase
+import dk.zlepper.digiapp.daos.UserCredentialsDao
 import dk.zlepper.digiapp.services.AuthenticatedUserService
 import dk.zlepper.digiapp.services.AuthenticationService
 import dk.zlepper.digiapp.services.UploadService
@@ -31,12 +35,29 @@ class ReceiverActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     private fun handleSendImage(intent: Intent) {
         (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
+            val userDao = GetAppDatabase(applicationContext).userCredentialsDao()
+
             GlobalScope.launch {
-                AuthenticationService.login("superadministrator", "test")
+                val creds = userDao.getStoredCredentials()
+                if (creds != null) {
+                    AuthenticationService.login(creds.username, creds.password)
+                } else {
+
+                }
+            }
+
+            try {
+                AuthenticatedUserService.requireAccessKey()
+            } catch (ex: Exception) {
+                Toast.makeText(this, "Could not share because user is not authenticated please login and try again", Toast.LENGTH_LONG).show()
+                return
             }
             uploadFile(it)
         }
